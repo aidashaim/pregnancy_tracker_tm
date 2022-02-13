@@ -1,0 +1,70 @@
+name: pregnancy_tracker_tm
+description: Pregnancy Tracker
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+5
+
+environment:
+  sdk: ">=2.15.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  connectivity: ^3.0.6
+  cupertino_icons: ^1.0.2
+  dotted_border: ^2.0.0+1
+  fl_chart: ^0.40.6
+  flutter_html: ^2.2.1
+  flutter_local_notifications: ^9.1.5
+  flutter_screenutil: ^5.0.0+2
+  flutter_svg: ^0.23.0+1
+  get: ^4.3.8
+  get_storage: ^2.0.3
+  google_mobile_ads: ^1.0.1
+  html: ^0.15.0
+  in_app_purchase: ^2.0.1
+  intl: ^0.17.0
+  launch_review: ^3.0.1
+  share: ^2.0.4
+  table_calendar: ^3.0.3
+
+  metrica_plugin:
+    path: metrica_plugin/
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.9.2
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.4
+
+flutter:
+
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/icons/baby/
+    - assets/icons/weeks/
+    - assets/fonts/
+
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+          weight: 500
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Raleway-Medium.ttf
+          weight: 500
+
+flutter_icons:
+  ios: true
+  remove_alpha_ios: true
+  android: true
+  image_path: "assets/images/launcher-app_icon.png"
+
+
