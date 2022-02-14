@@ -115,14 +115,16 @@ class PurchaseService {
           log('date from storage ${_storage.box.read(UtilStorage.dateProExpired)}');
           log('expired date $expiredDate');
 
-          if ((dateFromStorage != null &&
-                  (dateFromStorage.isAfter(expiredDate) || dateFromStorage.isAtSameMomentAs(expiredDate))) ||
-              DateTime.now().isAfter(expiredDate)) {
-            _paywallController.isLoading.value = false;
-            showRestoreDialog('Нет активных покупок \nили текущая покупка истекает \nпозднее чем предыдущие');
-            await Future.delayed(const Duration(seconds: 3));
-            Get.back();
-            return;
+          if (dateFromStorage != null) {
+            if (dateFromStorage.isAfter(expiredDate) ||
+                dateFromStorage.isAtSameMomentAs(expiredDate) ||
+                DateTime.now().isAfter(expiredDate)) {
+              _paywallController.isLoading.value = false;
+              showRestoreDialog('Нет активных покупок \nили текущая покупка истекает \nпозднее чем предыдущие');
+              await Future.delayed(const Duration(seconds: 3));
+              Get.back();
+              return;
+            }
           }
 
           log('set new date');
@@ -138,19 +140,12 @@ class PurchaseService {
             Get.back();
           }
         }
-        // хз что это
         if (Platform.isAndroid) {
-          if (//!_kAutoConsume &&
-              !_isNonConsumable(purchaseDetails.productID)) {
-              final InAppPurchaseAndroidPlatformAddition androidAddition =
-                  _connection.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-              await androidAddition.consumePurchase(purchaseDetails);
-            }
-          // if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-          //   final InAppPurchaseAndroidPlatformAddition androidAddition =
-          //       _connection.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-          //   await androidAddition.consumePurchase(purchaseDetails);
-          // }
+          if (!_isNonConsumable(purchaseDetails.productID)) {
+            final InAppPurchaseAndroidPlatformAddition androidAddition =
+                _connection.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+            await androidAddition.consumePurchase(purchaseDetails);
+          }
         }
         if (purchaseDetails.pendingCompletePurchase) {
           try {
@@ -176,7 +171,7 @@ class PurchaseService {
         if (_isNonConsumable(productDetails.id)) {
           InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
         } else {
-          InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam);
+          InAppPurchase.instance.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
         }
       }
     } catch (error) {
@@ -187,7 +182,15 @@ class PurchaseService {
   Future<void> restorePurchases() async {
     log('restore purchases');
     try {
+      _paywallController.isLoading.value = true;
       await _connection.restorePurchases();
+      await Future.delayed(const Duration(seconds: 1));
+      _paywallController.isLoading.value = false;
+      if(!(Get.isDialogOpen ?? false)){
+        showRestoreDialog('Покупки не найдены');
+        await Future.delayed(const Duration(seconds: 3));
+        Get.back();
+      }
     } catch (error) {
       log('restore purchases error ${error.toString()}');
     }
