@@ -28,7 +28,7 @@ class AdBannerState extends State<AdBanner> {
     if (!userRepository.currentUser.isPro) {
       _bannerAd = BannerAd(
         adUnitId: // 'ca-app-pub-3940256099942544/6300978111', //InterstitialAd.testAdUnitId,
-            Platform.isAndroid ? 'ca-app-pub-7506786058235214/5734342754' : 'ca-app-pub-7506786058235214/1627576784',
+            Platform.isAndroid ? 'ca-app-pub-7506786058235214/1515702629' : 'ca-app-pub-7506786058235214/6879903460',
         request: const AdRequest(),
         size: widget.isHome
             ? AdSize(width: (Get.size.width - widget.padding).toInt(), height: 228)

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:pregnancy_tracker_tm/screens/home/home_controller.dart';
 import 'package:pregnancy_tracker_tm/screens/paywall/paywall_controller.dart';
 import 'package:pregnancy_tracker_tm/utils/util_storage.dart';
 import 'package:pregnancy_tracker_tm/utils/util_text_styles.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
 class PurchaseService {
   PurchaseService._internal();
@@ -113,9 +115,9 @@ class PurchaseService {
           log('date from storage ${_storage.box.read(UtilStorage.dateProExpired)}');
           log('expired date $expiredDate');
 
-          if ((dateFromStorage != null && dateFromStorage.isAfter(expiredDate)) ||
-              DateTime.now().isAfter(expiredDate) ||
-              dateFromStorage!.isAtSameMomentAs(expiredDate)) {
+          if ((dateFromStorage != null &&
+                  (dateFromStorage.isAfter(expiredDate) || dateFromStorage.isAtSameMomentAs(expiredDate))) ||
+              DateTime.now().isAfter(expiredDate)) {
             _paywallController.isLoading.value = false;
             showRestoreDialog('Нет активных покупок \nили текущая покупка истекает \nпозднее чем предыдущие');
             await Future.delayed(const Duration(seconds: 3));
@@ -137,15 +139,28 @@ class PurchaseService {
           }
         }
         // хз что это
-        // if (Platform.isAndroid) {
-        //   if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-        //     final InAppPurchaseAndroidPlatformAddition androidAddition =
-        //         _connection.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
-        //     await androidAddition.consumePurchase(purchaseDetails);
-        //   }
-        // }
+        if (Platform.isAndroid) {
+          if (//!_kAutoConsume &&
+              !_isNonConsumable(purchaseDetails.productID)) {
+              final InAppPurchaseAndroidPlatformAddition androidAddition =
+                  _connection.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+              await androidAddition.consumePurchase(purchaseDetails);
+            }
+          // if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
+          //   final InAppPurchaseAndroidPlatformAddition androidAddition =
+          //       _connection.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+          //   await androidAddition.consumePurchase(purchaseDetails);
+          // }
+        }
         if (purchaseDetails.pendingCompletePurchase) {
-          await _connection.completePurchase(purchaseDetails);
+          try {
+            await _connection.completePurchase(purchaseDetails);
+          } on InAppPurchaseException catch (error) {
+            log('InAppPurchaseException ${error.toString()}');
+            _paywallController.isLoading.value = false;
+          } catch (error) {
+            _paywallController.isLoading.value = false;
+          }
           _paywallController.isLoading.value = false;
         }
       }
