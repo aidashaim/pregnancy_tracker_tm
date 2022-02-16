@@ -72,7 +72,7 @@ class LoginController extends GetxController {
     }
   }
 
-  void goNext() {
+  Future<void> goNext() async{
     DateTime now = DateTime.now();
     DateTime nextThursday = now;
     DateTime nextMonday = now;
@@ -86,19 +86,19 @@ class LoginController extends GetxController {
     }
     nextDay = now.hour < 11 ? now : now.add(const Duration(days: 1));
 
-    userRepository.setCurrentUser(
+    await userRepository.setCurrentUser(
       UserModel(dateOfBirth: _dateOfBirth!, gestationalAge: _daysCount, currentWeek: _daysCount ~/ 7, isPro: false),
     );
 
-    NotificationService().showPeriodically(
+    await NotificationService().showPeriodically(
       0,
       'Доступна новая статья',
-      '',
-      DateTime(nextDay.year, nextDay.month, nextDay.day, 11, 0),
       'Спешите прочесть!',
+      DateTime(nextDay.year, nextDay.month, nextDay.day, 11, 0),
+      'UtilRoutes.main',
       true,
     );
-    NotificationService().showPeriodically(
+    await NotificationService().showPeriodically(
       2,
       'Не забудьте взвеситься',
       'Следите за весом в динамике',
@@ -111,7 +111,7 @@ class LoginController extends GetxController {
     for (int i = week + 1; i < 42; i++) {
       DateTime _date = nextMonday.add(Duration(days: (i - week) * 7));
       bool _b = UtilRepo.babyFruit[i].contains('Меньше');
-      NotificationService().showScheduled(
+      await NotificationService().showScheduled(
         1,
         'Ваш малыш ${_b ? '' : 'как'} ${UtilRepo.babyFruit[i].toLowerCase()}',
         'Читайте новые советы на неделю',

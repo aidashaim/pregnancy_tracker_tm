@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:pregnancy_tracker_tm/services/purchase_service.dart';
@@ -12,6 +14,7 @@ class PaywallController extends GetxController {
 
   @override
   onInit() {
+    isAndroid.value = Platform.isAndroid;
     getItems();
     super.onInit();
   }

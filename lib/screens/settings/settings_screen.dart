@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pregnancy_tracker_tm/models/size_unit.dart';
 import 'package:pregnancy_tracker_tm/models/weight_unit.dart';
 import 'package:pregnancy_tracker_tm/screens/settings/settings_controller.dart';
+import 'package:pregnancy_tracker_tm/utils/util_icons.dart';
 import 'package:pregnancy_tracker_tm/widgets/app_dropdown_button.dart';
 import 'package:pregnancy_tracker_tm/widgets/main_list_item.dart';
 import 'package:pregnancy_tracker_tm/utils/util_colors.dart';
@@ -23,7 +24,22 @@ class SettingsScreen extends GetView<SettingsController> {
             shrinkWrap: true,
             padding: EdgeInsets.all(15.w),
             children: [
-              listWidget('Аккаунт', controller.accountSettingsItems),
+              listWidget(
+                'Аккаунт',
+                [
+                  MainListItem(title: 'Избранное', onTap: controller.goToSaved, icon: UtilIcons.starSaved),
+                  if (controller.isUserPro.value)
+                    MainListItem(title: 'Купить премиум', onTap: controller.goToPaywall, icon: UtilIcons.crown),
+                  MainListItem(
+                    title: 'Поделиться приложением',
+                    onTap: controller.share,
+                    icon: UtilIcons.share,
+                    color: UtilColors.green,
+                  ),
+                  MainListItem(title: 'Оценить приложение', onTap: controller.rateApp, icon: UtilIcons.like),
+                  MainListItem(title: 'Я родила', onTap: controller.goToIGaveBirth, icon: UtilIcons.pacifier),
+                ],
+              ),
               SizedBox(height: 25.w),
               listWidget('Настройки', [
                 MainListItem(title: 'Вес до беременности', onTap: controller.enterWeightBeforePregnancy),

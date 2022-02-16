@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pregnancy_tracker_tm/models/mood_model.dart';
-import 'package:pregnancy_tracker_tm/repositories/user_repository.dart';
 import 'package:pregnancy_tracker_tm/screens/home/home_controller.dart';
 import 'package:pregnancy_tracker_tm/screens/home/widgets/baby_fruit.dart';
 import 'package:pregnancy_tracker_tm/screens/home/widgets/weekly_advices.dart';
@@ -69,7 +68,7 @@ class HomeScreen extends GetView<HomeController> {
                 SizedBox(height: 20.w),
               ],
               controller.selectedDayMood.value == null ? moodWidget() : const SizedBox(),
-              if (!userRepository.currentUser.isPro) ...[
+              if (controller.isUserPro.value) ...[
                 SizedBox(height: 20.w),
                 buyProWidget(),
               ],

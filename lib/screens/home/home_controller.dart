@@ -28,6 +28,7 @@ class HomeController extends GetxController {
   final RxBool isAdvicesLoading = false.obs;
   final RxBool hasWeightToday = false.obs;
   final RxBool hasSizeToday = false.obs;
+  final RxBool isUserPro = false.obs;
   final RxList<WeeklyAdviceGroupModel> weeklyAdvices = <WeeklyAdviceGroupModel>[].obs;
   final RxList<DailyAdviceModel> dailyAdvices = <DailyAdviceModel>[].obs;
   final Rx<MoodModel?> selectedDayMood = Rx<MoodModel?>(null);
@@ -57,6 +58,7 @@ class HomeController extends GetxController {
     listController.addListener(() {
       getDailyAdvices();
     });
+    isUserPro.value = userRepository.currentUser.isPro;
     super.onInit();
   }
 

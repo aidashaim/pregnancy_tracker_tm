@@ -9,6 +9,7 @@ import 'package:pregnancy_tracker_tm/providers/storage_provider.dart';
 import 'package:pregnancy_tracker_tm/repositories/user_repository.dart';
 import 'package:pregnancy_tracker_tm/screens/home/home_controller.dart';
 import 'package:pregnancy_tracker_tm/screens/paywall/paywall_controller.dart';
+import 'package:pregnancy_tracker_tm/screens/settings/settings_controller.dart';
 import 'package:pregnancy_tracker_tm/utils/util_storage.dart';
 import 'package:pregnancy_tracker_tm/utils/util_text_styles.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
@@ -35,7 +36,6 @@ class PurchaseService {
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
-      log('purchase listen done');
       _subscription.cancel();
     }, onError: (error) {
       log('purchase listen error ${error.toString()}');
@@ -47,10 +47,6 @@ class PurchaseService {
     ProductDetailsResponse productDetailResponse = await _connection.queryProductDetails(productIds);
     if (productDetailResponse.error == null) {
       _products = productDetailResponse.productDetails;
-      log('productsss ${_products.length.toString()}');
-    }
-    for (var product in _products) {
-      log('producttt ${product.id} ${product.title} ${product.price}');
     }
     return _products;
   }
@@ -59,19 +55,14 @@ class PurchaseService {
     _paywallController = Get.find<PaywallController>();
     for (var purchaseDetails in purchaseDetailsList) {
       if (purchaseDetails.status == PurchaseStatus.pending) {
-        log('purchase status PENDING');
         _paywallController.isLoading.value = true;
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
-          log('purchase status ERROR');
           _paywallController.isLoading.value = false;
         } else if (purchaseDetails.status == PurchaseStatus.purchased ||
             purchaseDetails.status == PurchaseStatus.restored) {
           _paywallController.isLoading.value = true;
-          log('purchase status PURCHASED or RESTORED');
-          log('product ${purchaseDetails.productID}');
           DateTime transactionDate = DateTime.fromMillisecondsSinceEpoch(int.parse(purchaseDetails.transactionDate!));
-          log('transaction date $transactionDate');
 
           late DateTime expiredDate;
           switch (purchaseDetails.productID) {
@@ -112,8 +103,6 @@ class PurchaseService {
 
           final StorageProvider _storage = Get.find<StorageProvider>();
           DateTime? dateFromStorage = DateTime.tryParse(_storage.box.read(UtilStorage.dateProExpired) ?? '');
-          log('date from storage ${_storage.box.read(UtilStorage.dateProExpired)}');
-          log('expired date $expiredDate');
 
           if (dateFromStorage != null) {
             if (dateFromStorage.isAfter(expiredDate) ||
@@ -127,15 +116,21 @@ class PurchaseService {
             }
           }
 
-          log('set new date');
           _storage.box.write(UtilStorage.dateProExpired, expiredDate.toString());
           await userRepository.setProUser(true);
-          Get.find<HomeController>().onInit();
+          Get.find<HomeController>().isUserPro.value = true;
+          Get.find<SettingsController>().isUserPro.value = true;
           _paywallController.isLoading.value = false;
 
           if (purchaseDetails.status == PurchaseStatus.restored) {
+            String title = _products
+                .firstWhere((e) => e.id == purchaseDetails.productID)
+                .title
+                .replaceAll('(com.pregnancytracker.tm (unreviewed))', '')
+                .replaceAll('(com.pregnancytracker.tm)', '');
             showRestoreDialog(
-                'Восстановлено: \n${_products.firstWhere((e) => e.id == purchaseDetails.productID).title.replaceAll('(com.pregnancytracker.tm (unreviewed))', '').replaceAll('(com.pregnancytracker.tm)', '')}');
+              'Восстановлено: \n$title',
+            );
             await Future.delayed(const Duration(seconds: 3));
             Get.back();
           }
@@ -163,7 +158,6 @@ class PurchaseService {
   }
 
   void buyProduct(String id) {
-    log('buy product $id');
     try {
       final ProductDetails? productDetails = _products.firstWhereOrNull((e) => e.id == id);
       if (productDetails != null) {
@@ -180,13 +174,12 @@ class PurchaseService {
   }
 
   Future<void> restorePurchases() async {
-    log('restore purchases');
     try {
       _paywallController.isLoading.value = true;
       await _connection.restorePurchases();
       await Future.delayed(const Duration(seconds: 1));
       _paywallController.isLoading.value = false;
-      if(!(Get.isDialogOpen ?? false)){
+      if (!(Get.isDialogOpen ?? false)) {
         showRestoreDialog('Покупки не найдены');
         await Future.delayed(const Duration(seconds: 3));
         Get.back();

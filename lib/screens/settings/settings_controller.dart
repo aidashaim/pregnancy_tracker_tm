@@ -15,9 +15,6 @@ import 'package:pregnancy_tracker_tm/services/notification_service.dart';
 import 'package:pregnancy_tracker_tm/utils/util_formatters.dart';
 import 'package:pregnancy_tracker_tm/utils/util_storage.dart';
 import 'package:pregnancy_tracker_tm/widgets/app_text_field.dart';
-import 'package:pregnancy_tracker_tm/widgets/main_list_item.dart';
-import 'package:pregnancy_tracker_tm/utils/util_colors.dart';
-import 'package:pregnancy_tracker_tm/utils/util_icons.dart';
 import 'package:pregnancy_tracker_tm/utils/util_routes.dart';
 import 'package:pregnancy_tracker_tm/widgets/app_dialog.dart';
 import 'package:pregnancy_tracker_tm/widgets/pickers.dart';
@@ -27,39 +24,36 @@ class SettingsController extends GetxController {
   final RxString selectedTummySizeUnits = ''.obs;
   final RxString selectedWeightUnits = ''.obs;
   final RxBool sendNotifications = true.obs;
+  final RxBool isUserPro = false.obs;
   final TextEditingController valueTextController = TextEditingController();
   DateTime? birthDate;
-
-  List<MainListItem> accountSettingsItems = [
-    MainListItem(title: 'Избранное', onTap: () => Get.toNamed(UtilRoutes.savedArticles), icon: UtilIcons.starSaved),
-    MainListItem(title: 'Купить премиум', onTap: () => Get.toNamed(UtilRoutes.paywall), icon: UtilIcons.crown),
-    MainListItem(
-        title: 'Поделиться приложением',
-        onTap: () async {
-          String appUrl = Platform.isAndroid ? UtilRepo.shareUrlAndroid : UtilRepo.shareUrlIOS;
-          await Share.share(appUrl);
-        },
-        icon: UtilIcons.share,
-        color: UtilColors.green),
-    MainListItem(
-        title: 'Оценить приложение',
-        onTap: () {
-          if (Platform.isAndroid) {
-            LaunchReview.launch(androidAppId: "com.pregnancytracker.tm");
-          } //else
-          //LaunchReview.launch(iOSAppId: "1559383569");
-        },
-        icon: UtilIcons.like),
-    MainListItem(title: 'Я родила', onTap: () => Get.toNamed(UtilRoutes.iGaveBirth), icon: UtilIcons.pacifier),
-  ];
 
   @override
   void onInit() {
     super.onInit();
+    isUserPro.value = userRepository.currentUser.isPro;
     selectedTummySizeUnits.value =
         userRepository.currentUser.sizeUnits?.getRusName() ?? SizeUnit.centimeter.getRusName();
     selectedWeightUnits.value =
         userRepository.currentUser.weightUnits?.getRusName() ?? WeightUnit.kilogram.getRusName();
+  }
+
+  void goToSaved() => Get.toNamed(UtilRoutes.savedArticles);
+
+  void goToPaywall() => Get.toNamed(UtilRoutes.paywall);
+
+  void goToIGaveBirth() => Get.toNamed(UtilRoutes.iGaveBirth);
+
+  Future<void> share() async {
+    String appUrl = Platform.isAndroid ? UtilRepo.shareUrlAndroid : UtilRepo.shareUrlIOS;
+    await Share.share(appUrl);
+  }
+
+  void rateApp() {
+    if (Platform.isAndroid) {
+      LaunchReview.launch(androidAppId: "com.pregnancytracker.tm");
+    } //else
+    //LaunchReview.launch(iOSAppId: "1559383569");
   }
 
   Future<void> selectSizeUnits(String value) async {
