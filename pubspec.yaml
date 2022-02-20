@@ -1,7 +1,7 @@
 name: pregnancy_tracker_tm
 description: Pregnancy Tracker
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+9
+version: 1.0.0+10
 
 environment:
   sdk: ">=2.15.0 <3.0.0"

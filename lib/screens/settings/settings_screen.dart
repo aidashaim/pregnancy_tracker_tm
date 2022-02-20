@@ -28,7 +28,7 @@ class SettingsScreen extends GetView<SettingsController> {
                 'Аккаунт',
                 [
                   MainListItem(title: 'Избранное', onTap: controller.goToSaved, icon: UtilIcons.starSaved),
-                  if (controller.isUserPro.value)
+                  if (!controller.isUserPro.value)
                     MainListItem(title: 'Купить премиум', onTap: controller.goToPaywall, icon: UtilIcons.crown),
                   MainListItem(
                     title: 'Поделиться приложением',

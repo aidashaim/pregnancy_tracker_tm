@@ -68,7 +68,7 @@ class HomeScreen extends GetView<HomeController> {
                 SizedBox(height: 20.w),
               ],
               controller.selectedDayMood.value == null ? moodWidget() : const SizedBox(),
-              if (controller.isUserPro.value) ...[
+              if (!controller.isUserPro.value) ...[
                 SizedBox(height: 20.w),
                 buyProWidget(),
               ],
