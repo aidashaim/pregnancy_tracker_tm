@@ -8,7 +8,6 @@ class UserModel {
   late int gestationalAge;
   late int currentWeek;
   late DateTime dateOfBirth;
-  late bool isPro;
   WeightModel? weightBeforePregnancy;
   WeightModel? weightCurrent;
   SizeModel? tummySizeBeforePregnancy;
@@ -20,7 +19,6 @@ class UserModel {
     required this.gestationalAge,
     required this.currentWeek,
     required this.dateOfBirth,
-    required this.isPro,
     this.weightBeforePregnancy,
     this.weightCurrent,
     this.tummySizeBeforePregnancy,
@@ -42,7 +40,6 @@ class UserModel {
       tummySizeCurrent = json['tummySizeCurrent'] != null ? SizeModel.fromJSON(json['tummySizeCurrent']) : null;
       weightUnits = WeightUnit.getByName(json['weightUnits'] as String? ?? WeightUnit.kilogram.stringCode);
       sizeUnits = SizeUnit.getByName(json['sizeUnits'] as String? ?? SizeUnit.centimeter.stringCode);
-      isPro = json['isPro'] as bool;
     } catch (e) {
       log('user_model error: $e');
     }
@@ -58,7 +55,6 @@ class UserModel {
         'tummySizeCurrent': tummySizeCurrent?.toJSON(),
         'weightUnits': weightUnits?.stringCode,
         'sizeUnits': sizeUnits?.stringCode,
-        'isPro': isPro,
       };
 
   UserModel copyWith({
@@ -71,7 +67,6 @@ class UserModel {
     SizeModel? tummySizeCurrent,
     WeightUnit? weightUnits,
     SizeUnit? sizeUnits,
-    bool? isPro,
   }) =>
       UserModel(
         gestationalAge: gestationalAge ?? this.gestationalAge,
@@ -83,6 +78,5 @@ class UserModel {
         tummySizeCurrent: tummySizeCurrent ?? this.tummySizeCurrent,
         weightUnits: weightUnits ?? this.weightUnits,
         sizeUnits: sizeUnits ?? this.sizeUnits,
-        isPro: isPro ?? false,
       );
 }

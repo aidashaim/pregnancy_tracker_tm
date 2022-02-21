@@ -152,9 +152,9 @@ class UserRepository {
         currentUser.copyWith(dateOfBirth: date, gestationalAge: gestationalAge, currentWeek: currentWeek));
   }
 
-  Future<void> setProUser(bool isPro) async {
-    await setCurrentUser(currentUser.copyWith(isPro: isPro));
-  }
+  // Future<void> setProUser(bool isPro) async {
+  //   await setCurrentUser(currentUser.copyWith(isPro: isPro));
+  // }
 }
 
 UserRepository userRepository = UserRepository();

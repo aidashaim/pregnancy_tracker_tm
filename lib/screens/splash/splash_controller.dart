@@ -4,6 +4,7 @@ import 'package:pregnancy_tracker_tm/providers/storage_provider.dart';
 import 'package:pregnancy_tracker_tm/repositories/user_repository.dart';
 import 'package:get/get.dart';
 import 'package:pregnancy_tracker_tm/services/interstitial_ad_service.dart';
+import 'package:pregnancy_tracker_tm/services/purchase_service.dart';
 import 'package:pregnancy_tracker_tm/utils/util_repo.dart';
 import 'package:pregnancy_tracker_tm/utils/util_routes.dart';
 import 'package:pregnancy_tracker_tm/utils/util_storage.dart';
@@ -47,23 +48,10 @@ class SplashController extends GetxController {
       user.gestationalAge = days > UtilRepo.pregnancyDuration ? UtilRepo.pregnancyDuration : days;
       user.currentWeek = user.gestationalAge ~/ 7;
 
-      DateTime? dateExpiredPro = DateTime.tryParse(_storage.box.read(UtilStorage.dateProExpired) ?? '');
-      if (dateExpiredPro != null) {
-        if (dateExpiredPro.isBefore(DateTime.now())) {
-          user.isPro = false;
-          _storage.box.remove(UtilStorage.dateProExpired);
-        } else {
-          user.isPro = true;
-        }
-        log('expired pro date ${dateExpiredPro.toString()}');
-        log('date expired isBefore now ${dateExpiredPro.isBefore(DateTime.now())}');
-      } else {
-        user.isPro = false;
-      }
-
       userRepository.setCurrentUser(user).then((value) async {
         await Future.delayed(const Duration(seconds: 2));
-        if (!userRepository.currentUser.isPro) InterstitialAdService.showInterstitialAd(0);
+        if (!PurchaseService.instance.isProUser) InterstitialAdService.showInterstitialAd(0);
+        PurchaseService.instance.isOnInit = false;
         Get.offAllNamed(UtilRoutes.main);
       });
     } else {

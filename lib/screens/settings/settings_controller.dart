@@ -3,6 +3,7 @@ import 'package:launch_review/launch_review.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pregnancy_tracker_tm/screens/home/home_controller.dart';
+import 'package:pregnancy_tracker_tm/services/purchase_service.dart';
 import 'package:pregnancy_tracker_tm/utils/util_repo.dart';
 import 'package:share/share.dart';
 import 'package:pregnancy_tracker_tm/models/size_model.dart';
@@ -31,7 +32,7 @@ class SettingsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    isUserPro.value = userRepository.currentUser.isPro;
+    isUserPro.value = PurchaseService.instance.isProUser;
     selectedTummySizeUnits.value =
         userRepository.currentUser.sizeUnits?.getRusName() ?? SizeUnit.centimeter.getRusName();
     selectedWeightUnits.value =
@@ -52,8 +53,9 @@ class SettingsController extends GetxController {
   void rateApp() {
     if (Platform.isAndroid) {
       LaunchReview.launch(androidAppId: "com.pregnancytracker.tm");
-    } //else
-    //LaunchReview.launch(iOSAppId: "1559383569");
+    } else {
+      LaunchReview.launch(iOSAppId: "1610942708");
+    }
   }
 
   Future<void> selectSizeUnits(String value) async {
@@ -84,6 +86,7 @@ class SettingsController extends GetxController {
       _storage.box.erase();
       _storage.box.write(UtilStorage.firstRun, true);
       NotificationService().cancelAll();
+      PurchaseService.instance.isProUser = false;
       Get.offAllNamed(UtilRoutes.login);
     }
   }

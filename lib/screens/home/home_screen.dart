@@ -24,81 +24,86 @@ class HomeScreen extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: UtilColors.mainScaffoldGrey,
       body: Obx(
-        () => NotificationListener<OverscrollIndicatorNotification>(
-          onNotification: (overscroll) {
-            overscroll.disallowIndicator();
-            return false;
-          },
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            controller: controller.listController,
-            children: [
-              MainHeader(
-                dateOfBirth: UtilFormatters.date(controller.dateOfBirth),
-                gestationalAge: controller.gestationalAge,
-                beforeBirth: controller.beforeBirth,
-                days: controller.days,
-              ),
-              SizedBox(height: 20.w),
-              GetBuilder<HomeController>(
-                id: "weeklyAdvices",
-                builder: (controller) =>
-                    WeeklyAdvices(advices: controller.weeklyAdvices, onTap: controller.goToWeeklyAdvice),
-              ),
-              SizedBox(height: 20.w),
-              if (controller.days ~/ 7 > 35) iBornWidget(),
-              SizedBox(height: 20.w),
-              BabyFruit(),
-              SizedBox(height: 20.w),
-              if (!controller.hasWeightToday.value || !controller.hasSizeToday.value) ...[
-                SizedBox(
-                  height: controller.getTextHeight('Самое время взвеситься'),
-                  child: ListView(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      if (!controller.hasWeightToday.value)
-                        weightAndHeight('Самое время взвеситься', UtilImages.weight, UtilRoutes.myWeight),
-                      if (!controller.hasSizeToday.value)
-                        weightAndHeight('Пора измерить животик', UtilImages.height, UtilRoutes.tummySize),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20.w),
-              ],
-              controller.selectedDayMood.value == null ? moodWidget() : const SizedBox(),
-              if (!controller.isUserPro.value) ...[
-                SizedBox(height: 20.w),
-                buyProWidget(),
-              ],
-              ListView.separated(
+        () => Stack(
+          children: [
+            NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (overscroll) {
+                overscroll.disallowIndicator();
+                return false;
+              },
+              child: ListView(
                 shrinkWrap: true,
-                itemCount: controller.dailyAdvices.length,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.all(15.w),
-                    child: ArticlePreview(
-                      article: controller.dailyAdvices[index],
-                      onTap: controller.onArticleTap,
-                      onSavedTap: controller.saveArticle,
-                      dateOffset: index,
+                padding: EdgeInsets.zero,
+                controller: controller.listController,
+                children: [
+                  MainHeader(
+                    dateOfBirth: UtilFormatters.date(controller.dateOfBirth),
+                    gestationalAge: controller.gestationalAge,
+                    beforeBirth: controller.beforeBirth,
+                    days: controller.days,
+                  ),
+                  SizedBox(height: 20.w),
+                  GetBuilder<HomeController>(
+                    id: "weeklyAdvices",
+                    builder: (controller) =>
+                        WeeklyAdvices(advices: controller.weeklyAdvices, onTap: controller.goToWeeklyAdvice),
+                  ),
+                  SizedBox(height: 20.w),
+                  if (controller.days ~/ 7 > 35) iBornWidget(),
+                  SizedBox(height: 20.w),
+                  BabyFruit(),
+                  SizedBox(height: 20.w),
+                  if (!controller.hasWeightToday.value || !controller.hasSizeToday.value) ...[
+                    SizedBox(
+                      height: controller.getTextHeight('Самое время взвеситься'),
+                      child: ListView(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          if (!controller.hasWeightToday.value)
+                            weightAndHeight('Самое время взвеситься', UtilImages.weight, UtilRoutes.myWeight),
+                          if (!controller.hasSizeToday.value)
+                            weightAndHeight('Пора измерить животик', UtilImages.height, UtilRoutes.tummySize),
+                        ],
+                      ),
                     ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) => index % 3 == 2 ? adBlock() : const SizedBox(),
+                    SizedBox(height: 20.w),
+                  ],
+                  controller.selectedDayMood.value == null ? moodWidget() : const SizedBox(),
+                  if (!controller.isUserPro.value) ...[
+                    SizedBox(height: 20.w),
+                    buyProWidget(),
+                  ],
+                  ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: controller.dailyAdvices.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.all(15.w),
+                        child: ArticlePreview(
+                          article: controller.dailyAdvices[index],
+                          onTap: controller.onArticleTap,
+                          onSavedTap: controller.saveArticle,
+                          dateOffset: index,
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        index % 3 == 2 ? adBlock() : const SizedBox(),
+                  ),
+                ],
               ),
-              controller.isAdvicesLoading.value
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20.w),
-                      child: Center(
-                          child:
-                              CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(UtilColors.redBg))),
-                    )
-                  : const SizedBox(),
-            ],
-          ),
+            ),
+            if (controller.isAdvicesLoading.value)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.w),
+                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(UtilColors.redBg)),
+                ),
+              ),
+          ],
         ),
       ),
     );

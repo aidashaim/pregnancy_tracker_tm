@@ -39,7 +39,7 @@ class IGabeBirthScreen extends GetView<IGabeBirthController> {
                       textAlign: TextAlign.center,
                     ),
                     const Spacer(flex: 1),
-                    // todo: временно
+                    // временно скрыто
                     /*Text(
                       'Тут текст, типа “поздравляем Вас с новым этапом в вашей жизни. дети-чудо, желаем вам '
                       'бла бла бла, спасибо, что воспользовались нашим приложением. Мы крайне признательны.'

@@ -16,6 +16,7 @@ import 'package:pregnancy_tracker_tm/repositories/weekly_advices_repository.dart
 import 'package:pregnancy_tracker_tm/screens/calendar/calendar_controller.dart';
 import 'package:pregnancy_tracker_tm/services/api_service.dart';
 import 'package:pregnancy_tracker_tm/services/interstitial_ad_service.dart';
+import 'package:pregnancy_tracker_tm/services/purchase_service.dart';
 import 'package:pregnancy_tracker_tm/utils/util_formatters.dart';
 import 'package:pregnancy_tracker_tm/utils/util_images.dart';
 import 'package:pregnancy_tracker_tm/utils/util_repo.dart';
@@ -58,7 +59,8 @@ class HomeController extends GetxController {
     listController.addListener(() {
       getDailyAdvices();
     });
-    isUserPro.value = userRepository.currentUser.isPro;
+    isUserPro.value = PurchaseService.instance.isProUser;
+    fetchDailyAdvices(days - dailyAdvices.length);
     super.onInit();
   }
 
@@ -106,7 +108,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> onArticleTap(DailyAdviceModel article) async {
-    if (!userRepository.currentUser.isPro) InterstitialAdService.showInterstitialAd(1);
+    if (!isUserPro.value) InterstitialAdService.showInterstitialAd(1);
     await Get.toNamed(UtilRoutes.dailyAdviceView, arguments: {'article': article});
     savedDailyAdvices = dailyAdviceRepository.dailyAdvices;
     dailyAdvices.firstWhere((e) => e == article).isSaved =

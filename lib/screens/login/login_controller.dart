@@ -72,7 +72,7 @@ class LoginController extends GetxController {
     }
   }
 
-  Future<void> goNext() async{
+  Future<void> goNext() async {
     DateTime now = DateTime.now();
     DateTime nextThursday = now;
     DateTime nextMonday = now;
@@ -87,7 +87,7 @@ class LoginController extends GetxController {
     nextDay = now.hour < 11 ? now : now.add(const Duration(days: 1));
 
     await userRepository.setCurrentUser(
-      UserModel(dateOfBirth: _dateOfBirth!, gestationalAge: _daysCount, currentWeek: _daysCount ~/ 7, isPro: false),
+      UserModel(dateOfBirth: _dateOfBirth!, gestationalAge: _daysCount, currentWeek: _daysCount ~/ 7),
     );
 
     await NotificationService().showPeriodically(

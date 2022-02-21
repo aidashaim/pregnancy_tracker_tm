@@ -16,7 +16,6 @@ class UtilStorage {
   static const savedArticles = 'saved.articles';
   static const weeklyAdvicesShown = 'weekly.advices.shown';
   static const firstRun = 'first.run';
-  static const dateProExpired = 'date.pro.expired';
 
   static shoppingListItems(String listName) => '$listName.list.items';
 

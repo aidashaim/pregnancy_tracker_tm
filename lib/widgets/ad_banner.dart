@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:pregnancy_tracker_tm/repositories/user_repository.dart';
+import 'package:pregnancy_tracker_tm/services/purchase_service.dart';
 import 'package:pregnancy_tracker_tm/utils/util_colors.dart';
 
 class AdBanner extends StatefulWidget {
@@ -25,7 +25,7 @@ class AdBannerState extends State<AdBanner> {
   @override
   void initState() {
     super.initState();
-    if (!userRepository.currentUser.isPro) {
+    if (!PurchaseService.instance.isProUser) {
       _bannerAd = BannerAd(
         adUnitId: // 'ca-app-pub-3940256099942544/6300978111', //InterstitialAd.testAdUnitId,
             Platform.isAndroid ? 'ca-app-pub-7506786058235214/1515702629' : 'ca-app-pub-7506786058235214/6879903460',
@@ -57,7 +57,7 @@ class AdBannerState extends State<AdBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return !userRepository.currentUser.isPro
+    return !PurchaseService.instance.isProUser
         ? Padding(
             padding: EdgeInsets.only(bottom: widget.isHome ? 0 : 20.w),
             child: ClipRRect(

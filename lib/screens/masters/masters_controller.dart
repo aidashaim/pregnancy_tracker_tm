@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pregnancy_tracker_tm/repositories/user_repository.dart';
 import 'package:pregnancy_tracker_tm/services/interstitial_ad_service.dart';
+import 'package:pregnancy_tracker_tm/services/purchase_service.dart';
 import 'package:pregnancy_tracker_tm/widgets/grid_item.dart';
 import 'package:pregnancy_tracker_tm/utils/util_icons.dart';
 import 'package:pregnancy_tracker_tm/utils/util_routes.dart';
@@ -39,7 +39,7 @@ class MastersController extends GetxController {
   ];
 
   static Future<void> goToMaster(String route) async {
-    if (!userRepository.currentUser.isPro) InterstitialAdService.showInterstitialAd(2);
+    if (!PurchaseService.instance.isProUser) InterstitialAdService.showInterstitialAd(2);
     Get.toNamed(route);
   }
 }

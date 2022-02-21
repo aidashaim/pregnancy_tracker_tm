@@ -82,19 +82,21 @@ class PaywallScreen extends GetView<PaywallController> {
                     ),
                     SizedBox(height: 10.w),
                     if (!controller.isAndroid.value)
-                      RichText(
-                        text: TextSpan(
-                          text: 'Terms of Service',
-                          style:
-                              UtilTextStyles.termOfUseTitle.merge(const TextStyle(decoration: TextDecoration.underline)),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: ' and ',
-                              style:
-                                  UtilTextStyles.termOfUseTitle.merge(const TextStyle(decoration: TextDecoration.none)),
-                            ),
-                            TextSpan(text: 'Privacy Policy', style: UtilTextStyles.termOfUseTitle),
-                          ],
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Terms of Service',
+                            style:
+                                UtilTextStyles.termOfUseTitle.merge(const TextStyle(decoration: TextDecoration.underline)),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: ' and ',
+                                style:
+                                    UtilTextStyles.termOfUseTitle.merge(const TextStyle(decoration: TextDecoration.none)),
+                              ),
+                              TextSpan(text: 'Privacy Policy', style: UtilTextStyles.termOfUseTitle),
+                            ],
+                          ),
                         ),
                       ),
                     SizedBox(height: 10.w),

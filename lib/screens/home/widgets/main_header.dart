@@ -148,7 +148,7 @@ class MainHeader extends StatelessWidget {
                       Positioned(
                         left: Get.size.width / 18,
                         top: 10,
-                        child: UtilIcons(UtilIcons.baby(days ~/ 30), width: Get.width * .35),
+                        child: UtilIcons(UtilIcons.baby(days ~/ 30 == 0 ? 1 : days ~/ 30), width: Get.width * .35),
                       ),
                       Positioned(
                         top: 0,
